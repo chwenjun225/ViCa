@@ -52,7 +52,7 @@ LABELS = {
 PATH_MODEL_YOLO_V8 = "E:/Study/SDDLE/Model_YOLOv8/09_07_2023_08h59m/weights/best.pt"
 
 # ESRGAN model path
-PATH_MODEL_REAL_ESRGAN = "E:/Study/SDDLE/Model_ESRGAN/pre_trained_model/weights/RealESRGAN_x4.pth"
+PATH_MODEL_REAL_ESRGAN = "E:/Study/SDDLE/Model_REAL_ESRGAN/pre_trained_model/weights/RealESRGAN_x4.pth"
 
 # DEVICE GPU or CPU
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
