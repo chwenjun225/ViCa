@@ -1,1 +1,1 @@
-# Integrated-Machine-Learning-System-YOLOv8-and-REAL-ESRGAN
+# Integrated Machine Learning System YOLOv8 and REAL-ESRGAN
