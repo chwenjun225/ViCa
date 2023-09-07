@@ -188,5 +188,7 @@ if 1 == RUN:
 
     extract_barcode_img_from_yolov8_result(path_param="Data/img_labels_P2_0.jpg")
 
+    print("test git")
+
     # cv2.waitKey(0)
     # cv2.destroyAllWindows()
