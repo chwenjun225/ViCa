@@ -1,3 +1,8 @@
 # Integrated Machine Learning System YOLOv8 and REAL-ESRGAN
 
-Dự án đang trong thời gian phát triển.
+idea:
+while loop (nếu barcode chưa thể đọc):
+
+-> Tiếp tục đưa ảnh vào model yolov8
+-> real-esrgan
+-> cho đến khi đọc được barcode 
