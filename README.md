@@ -1,3 +1,3 @@
-# Integrated Machine Learning System YOLOv8 and REAL-ESRGAN
+# Decode barcode image using YOLOv8 and REAL-ESRGAN
 
-Develope after 
+(Develope after) 
