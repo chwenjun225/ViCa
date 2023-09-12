@@ -1,10 +1,15 @@
 import PIL.Image
 import torch
+import os
+
+ROOT_PATH = os.getcwd() + "/"
+
+INITIAL_DIR = ROOT_PATH + "Data/Labels_Foxconn"
 
 IMAGE_PIL = PIL.Image
 
 TITLE_WINDOW = "AICT-LAB-702 - National Kaohsiung University Science and Technology"
-ICON_WINDOW = "E:/Study/SDDLE/Icons/icon_nkust.ico"
+ICON_WINDOW = ROOT_PATH + "Icons/icon_nkust.ico"
 
 # Kích thước cửa sổ của App
 WINDOW_WIDTH = 650
@@ -49,10 +54,10 @@ LABELS = {
 }
 
 # YOLOv8 model path
-PATH_MODEL_YOLO_V8 = "E:/Study/SDDLE/Model_YOLOv8/09_07_2023_08h59m/weights/best.pt"
+PATH_MODEL_YOLO_V8 = ROOT_PATH + "Model_YOLOv8/09_07_2023_08h59m/weights/best.pt"
 
 # ESRGAN model path
-PATH_MODEL_REAL_ESRGAN = "E:/Study/SDDLE/Model_REAL_ESRGAN/pre_trained_model/weights/RealESRGAN_x4.pth"
+PATH_MODEL_REAL_ESRGAN = ROOT_PATH + "Model_REAL_ESRGAN/pre_trained_model/weights/RealESRGAN_x4.pth"
 
 # DEVICE GPU or CPU
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
@@ -64,8 +69,8 @@ VIDEO_SOURCE = 0
 DELAY_UPDATE_FRAME = 1
 
 # Save dir-in, dir-out
-PATH_SAVE_INPUT_FILES = "E:/Study/SDDLE/Save_Intput" + "/"
-PATH_SAVE_OUTPUT_FILES = "E:/Study/SDDLE/Save_Output" + "/"
+PATH_SAVE_INPUT_FILES = ROOT_PATH + "Save_Intput" + "/"
+PATH_SAVE_OUTPUT_FILES = ROOT_PATH + "SDDLE/Save_Output" + "/"
 
 
 """

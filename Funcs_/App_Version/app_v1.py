@@ -14,7 +14,7 @@ from RealESRGAN import RealESRGAN
 
 from Funcs_.config_app import *
 
-# ==================================================INIT DEFAULT SETTINGS================================================== #
+# ================================================== INIT DEFAULT SETTINGS ================================================== #
 if "Init_WINDOW":
     window = Tk()
 
@@ -219,19 +219,13 @@ def enhance_super_resolution_barcode(images_):
         #     output = MODEL_ESRGAN(image_LR).data.squeeze().float().cpu().clamp_(0, 1).numpy()
 
         image_pil = IMAGE_PIL.fromarray(images_[i]).convert('RGB')
-
         sr_image = MODEL_REAL_ESRGAN.predict(image_pil)
-
         output = Read_Barcode_QRCode(sr_image)
-
         # output = (output * 255.0).round()
         file_name = datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S-%f')[:-3] + ".jpg"
-
         cv2.imwrite(PATH_SAVE_INPUT_FILES + file_name, images_[i])
         cv2.imwrite(PATH_SAVE_OUTPUT_FILES + file_name, output)
-
         end_time = time.time()
-
         print("The time of Enhance Super Resolution Image is:", (end_time - start_time) * 10 ** 3, "ms")
 
 
@@ -256,7 +250,7 @@ def display_main_image_result_from_yolov8(image):
 def ask_open_file():
     stop_camera_opening()
     window.filename = filedialog.askopenfile(
-        initialdir="E:/Study/SDDLE/Data/Labels_Foxconn",
+        initialdir=INITIAL_DIR,
         title="Select A File",
         filetypes=[("all files", "*.*"), ("jpg files", "*.jpg"), ("png files", "*.png"), ("mp4 files", "*.mp4")])
     # try:
