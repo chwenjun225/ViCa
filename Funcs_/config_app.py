@@ -70,7 +70,7 @@ DELAY_UPDATE_FRAME = 1
 
 # Save dir-in, dir-out
 PATH_SAVE_INPUT_FILES = ROOT_PATH + "Save_Intput" + "/"
-PATH_SAVE_OUTPUT_FILES = ROOT_PATH + "SDDLE/Save_Output" + "/"
+PATH_SAVE_OUTPUT_FILES = ROOT_PATH + "Save_Output" + "/"
 
 
 """
