@@ -4,7 +4,7 @@ import os
 
 ROOT_PATH = os.getcwd() + "/"
 
-INITIAL_DIR = ROOT_PATH + "Data/Labels_Foxconn"
+INITIAL_DIR = ROOT_PATH + "Data/Labels_Factory"
 
 IMAGE_PIL = PIL.Image
 
