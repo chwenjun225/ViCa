@@ -1,0 +1,3 @@
+1. Xem lại và chỉnh sửa cách trích dẫn, phần "2. Related works".
+
+2. Training Real-ESRGAN với tập dữ liệu custom.
