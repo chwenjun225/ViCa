@@ -12,7 +12,7 @@ from pyzbar.pyzbar import decode
 
 from RealESRGAN import RealESRGAN
 
-from Funcs_.config_app import *
+from Main_Functions.config_app import *
 
 # ================================================== INIT DEFAULT SETTINGS ================================================== #
 if "Init_WINDOW":

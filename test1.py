@@ -7,8 +7,9 @@ from ultralytics import YOLO
 import random
 from barcode import EAN13
 from barcode.writer import ImageWriter
+import os
 
-from Funcs_.config_app import PATH_MODEL_YOLO_V8, YOLOv8_IMAGE_INPUT_SIZE
+from Main_Functions.config_app import PATH_MODEL_YOLO_V8, YOLOv8_IMAGE_INPUT_SIZE
 
 if "def":
     def save_image(image_param, path_save_image, format_save_image=".jpg"):
@@ -40,7 +41,7 @@ if "def":
         cv2.destroyAllWindows()
 
 
-    def extract_image_from_video(path):
+    def extract_image_from_video1(path):
         """
         Extract ảnh từ video.
         :param path:
@@ -111,6 +112,40 @@ if "def":
             my_code.save(f"Data/SR_Barcode_Images/{count_index}")
             count_index += 1
 
+    def change_name_images(paths):
+        i = 0
+        for p in os.listdir(paths):
+            filename = f"{i}" + ".jpg"
+            source = paths + filename
+            new_name = paths + filename
+            os.rename(source, new_name)
+
+            i += 1
+
+
+    def extract_image_from_video(input_path, output_path):
+        cap = cv2.VideoCapture(input_path)
+        if not cap.isOpened:
+            print("Can note open video")
+            exit()
+        while True:
+            ret, frame = cap.read()
+            if not ret:
+                print("Can't receive frame (stream end?). Exiting ...")
+                break
+            name_frame = datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S-%f')[:-3] + ".jpg"
+            print('Creating...' + name_frame)
+            cv2.imwrite(output_path + "/" + name_frame, frame)
+        cap.release()
+        cv2.destroyAllWindows()
+
+
 RUN = 1
 if 1 == RUN:
-    generate_barcode()
+    # generate_barcode()
+
+    # change_name_images(paths="D:/Datasets/Practical_Labels_Dataset")
+
+    extract_image_from_video(
+        input_path="D:/Datasets/Practical_Labels_Dataset/Videos/LB5AG2SD.US_video.avi",
+        output_path="D:/Datasets/Practical_Labels_Dataset/Frames")
