@@ -112,15 +112,15 @@ if "def":
             my_code.save(f"Data/SR_Barcode_Images/{count_index}")
             count_index += 1
 
-    def change_name_images(paths):
-        i = 0
-        for p in os.listdir(paths):
-            filename = f"{i}" + ".jpg"
-            source = paths + filename
-            new_name = paths + filename
-            os.rename(source, new_name)
+    def change_name_images(input_path, output_path):
+        input_images = glob.glob(input_path + "/*.jpg")
+        for count, filename in enumerate(input_images):
 
-            i += 1
+            image_ = cv2.imread(filename)
+            output_folder = output_path + "/"
+            new_name = str(count) + ".jpg"
+
+            cv2.imwrite(output_folder + new_name, image_)
 
 
     def extract_image_from_video(input_path, output_path):
@@ -144,8 +144,10 @@ RUN = 1
 if 1 == RUN:
     # generate_barcode()
 
-    # change_name_images(paths="D:/Datasets/Practical_Labels_Dataset")
+    change_name_images(
+        input_path="D:/Datasets/Practical_Labels_Dataset",
+        output_path="D:/Datasets/Practical_Labels_Dataset/Images")
 
-    extract_image_from_video(
-        input_path="D:/Datasets/Practical_Labels_Dataset/Videos/LB5AG2SD.US_video.avi",
-        output_path="D:/Datasets/Practical_Labels_Dataset/Frames")
+    # extract_image_from_video(
+    #     input_path="D:/Datasets/Practical_Labels_Dataset/Videos/LB5AG2SD.US_video.avi",
+    #     output_path="D:/Datasets/Practical_Labels_Dataset/Frames")
