@@ -7,7 +7,6 @@ from ultralytics import YOLO
 import random
 from barcode import EAN13
 from barcode.writer import ImageWriter
-import os
 
 from Main_Functions.config_app import PATH_MODEL_YOLO_V8, YOLOv8_IMAGE_INPUT_SIZE
 
@@ -39,34 +38,6 @@ if "def":
             if cv2.waitKey(1) == 27:
                 break
         cv2.destroyAllWindows()
-
-
-    def extract_image_from_video1(path):
-        """
-        Extract ảnh từ video.
-        :param path:
-        :return:
-        """
-        path_videos = glob.glob(path + "/*.mp4")
-        current_frame = 0
-        for path_video in path_videos:
-            cap = cv2.VideoCapture(path_video)
-            if not cap.isOpened:
-                print("Can note open video")
-                exit()
-            while True:
-                ret, frame = cap.read()
-                if not ret:
-                    print("Can't receive frame (stream end?). Exiting ...")
-                    break
-                name = path + '/imgs/' + str(current_frame) + '.jpg'
-                print('Creating...' + name)
-                cv2.imwrite(name, frame)
-                current_frame += 1
-                if cv2.waitKey(1) == 27:
-                    break
-            cap.release()
-            cv2.destroyAllWindows()
 
 
     def duplicate_labels(path):
@@ -142,12 +113,17 @@ if "def":
 
 RUN = 1
 if 1 == RUN:
+    start = time.time()
+
     # generate_barcode()
 
-    change_name_images(
-        input_path="D:/Datasets/Practical_Labels_Dataset",
-        output_path="D:/Datasets/Practical_Labels_Dataset/Images")
+    # change_name_images(
+    #     input_path="D:/Datasets/Practical_Labels_Dataset",
+    #     output_path="D:/Datasets/Practical_Labels_Dataset/Images")
 
     # extract_image_from_video(
     #     input_path="D:/Datasets/Practical_Labels_Dataset/Videos/LB5AG2SD.US_video.avi",
     #     output_path="D:/Datasets/Practical_Labels_Dataset/Frames")
+
+    end = time.time()
+    print("The time of execution of above program is :", (end - start) * 10 ** 3, "ms")

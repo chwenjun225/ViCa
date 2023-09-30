@@ -47,7 +47,7 @@ if "Init_WINDOW":
     MODEL_YOLO_V8 = YOLO(PATH_MODEL_YOLO_V8)
     print("MODEL_YOLO_V8 successfully applied...")
 
-    # Initialize ESRGAN model
+    # Initialize Super-Resolution models
     MODEL_REAL_ESRGAN = RealESRGAN(DEVICE, scale=4)
     MODEL_REAL_ESRGAN.load_weights(PATH_MODEL_REAL_ESRGAN, download=False)
     print("MODEL_REAL_ESRGAN successfully applied...")
@@ -195,16 +195,13 @@ def enhance_super_resolution_barcode(images_):
     :return:
     """
 
-    # TODO: Học cách sử dụng package `basicsr`
+    # TODO: triển khai các pretrained model của các
+    #  phương pháp cũ lên đối tượng là ảnh barcode.
 
-    # TODO: Sửa lại kiến trúc cho model ESRGAN
-
-    # TODO: Đã triển khai thành công trên desktop app,
-    #  tuy nhiên cần phải cải thiện chất lượng của
-    #  ảnh barcode sau khi đi đi qua network.
-    #  ---> Phương án triển khai:
-    #  1. Đọc hiểu kỹ lại bài báo.
-    #  2. Đào tạo lại với tập Custome Dataset.
+    # TODO:
+    #  1. Đọc lại bài báo real-esrgan để hiểu rõ hơn phương pháp của mình
+    #  2. Đọc các bài báo cũ để triển khai thành code
+    #  3. Nhanh lên thời gian có hạn
 
     for i in range(len(images_)):
         start_time = time.time()
@@ -220,8 +217,11 @@ def enhance_super_resolution_barcode(images_):
 
         image_pil = IMAGE_PIL.fromarray(images_[i]).convert('RGB')
         sr_image = MODEL_REAL_ESRGAN.predict(image_pil)
+
+        sr_image = np.array(sr_image)
+
         output = Read_Barcode_QRCode(sr_image)
-        # output = (output * 255.0).round()
+
         file_name = datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S-%f')[:-3] + ".jpg"
         cv2.imwrite(PATH_SAVE_INPUT_FILES + file_name, images_[i])
         cv2.imwrite(PATH_SAVE_OUTPUT_FILES + file_name, output)
@@ -230,12 +230,10 @@ def enhance_super_resolution_barcode(images_):
 
 
 def Read_Barcode_QRCode(image):
-    image = np.array(image)
     for d in decode(image):
         cv2.rectangle(image, (d.rect.left, d.rect.top), (d.rect.left + d.rect.width, d.rect.top + d.rect.height), (255, 0, 0), 2)
         cv2.polylines(image, [np.array(d.polygon)], True, (0, 255, 0), 2)
-        cv2.putText(image, d.data.decode(), (d.rect.left, d.rect.top + d.rect.height),
-                    cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
+        cv2.putText(image, d.data.decode(), (d.rect.left, d.rect.top + d.rect.height), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2, cv2.LINE_AA)
     return image
 
 
