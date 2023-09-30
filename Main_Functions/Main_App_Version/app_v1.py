@@ -48,9 +48,32 @@ if "Init_WINDOW":
     print("MODEL_YOLO_V8 successfully applied...")
 
     # Initialize Super-Resolution models
-    MODEL_REAL_ESRGAN = RealESRGAN(DEVICE, scale=4)
-    MODEL_REAL_ESRGAN.load_weights(PATH_MODEL_REAL_ESRGAN, download=False)
-    print("MODEL_REAL_ESRGAN successfully applied...")
+    if "REAL-ESRGAN":
+        MODEL_REAL_ESRGAN = RealESRGAN(DEVICE, scale=4)
+        MODEL_REAL_ESRGAN.load_weights(PATH_MODEL_REAL_ESRGAN, download=False)
+        print("MODEL_REAL_ESRGAN successfully applied...")
+
+    if "ESR-GAN":
+        print("ESR-GAN successfully applied...")
+
+    if "DAN":
+        print("DAN successfully applied...")
+
+    if "CDC":
+        print("CDC successfully applied...")
+
+    if "RESL-SR":
+        print("RESL-SR successfully applied...")
+
+    if "BSR-GAN":
+        print("BSR-GAN successfully applied...")
+
+    if "AC-GAN":
+        print("BSR-GAN successfully applied...")
+
+    if "SR-GAN":
+        print("SR-GAN successfully applied...")
+
 
 
 # ==================================================DEFINE COMPONENTS====================================================== #
