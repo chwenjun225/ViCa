@@ -209,11 +209,11 @@ def update_main_display():
             yolov8_results = get_result_yolov8(resize_width_height_yolov8(frame))  # Trả về ảnh barcode đã được cắt theo tọa độ để super-resolution nó
 
             display_main_image_result_from_yolov8(image=yolov8_results[0])
-            enhance_super_resolution_barcode(images_=yolov8_results[1])
+            Super_Resolution_Image(images_=yolov8_results[1])
         display_img0.after(DELAY_UPDATE_FRAME, update_main_display)  # Call the function after "DELAY_UPDATE_FRAME" milliseconds
 
 
-def enhance_super_resolution_barcode(images_):
+def Super_Resolution_Image(images_):
     """
     Implement ESRGAN: Enhanced Super-Resolution Generative Adversarial Networks
     Link: https://paperswithcode.com/paper/esrgan-enhanced-super-resolution-generative
@@ -281,7 +281,7 @@ def handle_image(image_param):
     img_wh_yolov8 = resize_width_height_yolov8(image_param)
     result_yolov8 = get_result_yolov8(img_wh_yolov8)
 
-    enhance_super_resolution_barcode(images_=result_yolov8[1])
+    Super_Resolution_Image(images_=result_yolov8[1])
     update_img0(result_yolov8[0])
 
 
