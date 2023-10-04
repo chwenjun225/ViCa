@@ -54,10 +54,31 @@ LABELS = {
 }
 
 # YOLOv8 model path
-PATH_MODEL_YOLO_V8 = ROOT_PATH + "Model_YOLOv8/09_07_2023_08h59m/weights/best.pt"
+PATH_MODEL_YOLO_V8 = ROOT_PATH + "Models/Model_YOLOv8/09_07_2023_08h59m/weights/best.pt"
 
-# ESRGAN model path
-PATH_MODEL_REAL_ESRGAN = ROOT_PATH + "Model_REAL_ESRGAN/pre_trained_model/weights/RealESRGAN_x4.pth"
+# REAL-ESRGAN model path
+PATH_MODEL_REAL_ESRGAN = ROOT_PATH + "Models/Model_REAL_ESRGAN/pre_trained_model/RealESRGAN_x4.pth"
+
+# ESR-GAN model path
+PATH_MODEL_ESRGAN = ROOT_PATH + ""
+
+# DAN model path
+PATH_MODEL_DAN = ROOT_PATH + ""
+
+# CDC model path
+PATH_MODEL_CDC = ROOT_PATH + ""
+
+# REAL-SR model path
+PATH_MODEL_REALSR = ROOT_PATH + ""
+
+# BSR-GAN model path
+PATH_MODEL_BSRGAN = ROOT_PATH + ""
+
+# AC-GAN model path
+PATH_MODEL_ACGAN = ROOT_PATH + ""
+
+# SR-GAN model path
+PATH_MODEL_SRGAN = ROOT_PATH + ""
 
 # DEVICE GPU or CPU
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"

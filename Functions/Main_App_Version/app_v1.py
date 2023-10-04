@@ -12,7 +12,7 @@ from pyzbar.pyzbar import decode
 
 from RealESRGAN import RealESRGAN
 
-from Main_Functions.config_app import *
+from Functions.config_app import *
 
 # ================================================== INIT DEFAULT SETTINGS ================================================== #
 if "Init_WINDOW":
@@ -54,25 +54,25 @@ if "Init_WINDOW":
         print("MODEL_REAL_ESRGAN successfully applied...")
 
     if "ESR-GAN":
-        print("ESR-GAN successfully applied...")
+        print("--- ESR-GAN successfully applied...")
 
     if "DAN":
-        print("DAN successfully applied...")
+        print("--- DAN successfully applied...")
 
     if "CDC":
-        print("CDC successfully applied...")
+        print("--- CDC successfully applied...")
 
     if "RESL-SR":
-        print("RESL-SR successfully applied...")
+        print("--- RESL-SR successfully applied...")
 
     if "BSR-GAN":
-        print("BSR-GAN successfully applied...")
+        print("--- BSR-GAN successfully applied...")
 
     if "AC-GAN":
-        print("BSR-GAN successfully applied...")
+        print("--- AC-GAN successfully applied...")
 
     if "SR-GAN":
-        print("SR-GAN successfully applied...")
+        print(--- "SR-GAN successfully applied...")
 
 
 

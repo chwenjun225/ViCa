@@ -8,7 +8,7 @@ import random
 from barcode import EAN13
 from barcode.writer import ImageWriter
 
-from Main_Functions.config_app import PATH_MODEL_YOLO_V8, YOLOv8_IMAGE_INPUT_SIZE
+from Functions.config_app import PATH_MODEL_YOLO_V8, YOLOv8_IMAGE_INPUT_SIZE
 
 if "def":
     def save_image(image_param, path_save_image, format_save_image=".jpg"):
