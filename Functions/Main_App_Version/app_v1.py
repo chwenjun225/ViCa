@@ -11,6 +11,7 @@ from ultralytics import YOLO
 from pyzbar.pyzbar import decode
 
 from RealESRGAN import RealESRGAN
+import The_Archs.RRDBNet_arch as arch_
 
 from Functions.config_app import *
 
@@ -54,6 +55,10 @@ if "Init_WINDOW":
         print("MODEL_REAL_ESRGAN successfully applied...")
 
     if "ESR-GAN":
+        MODEL_ESRGAN = arch_.RRDBNet(3, 3, 64, 23, gc=32)
+        MODEL_ESRGAN.load_state_dict(torch.load(PATH_MODEL_ESRGAN), strict=True)
+        MODEL_ESRGAN.eval()
+        MODEL_ESRGAN = MODEL_ESRGAN.to(DEVICE)
         print("--- ESR-GAN successfully applied...")
 
     if "DAN":
@@ -72,9 +77,7 @@ if "Init_WINDOW":
         print("--- AC-GAN successfully applied...")
 
     if "SR-GAN":
-        print(--- "SR-GAN successfully applied...")
-
-
+        print("--- SR-GAN successfully applied...")
 
 # ==================================================DEFINE COMPONENTS====================================================== #
 
@@ -217,14 +220,6 @@ def enhance_super_resolution_barcode(images_):
     :param images_:
     :return:
     """
-
-    # TODO: triển khai các pretrained model của các
-    #  phương pháp cũ lên đối tượng là ảnh barcode.
-
-    # TODO:
-    #  1. Đọc lại bài báo real-esrgan để hiểu rõ hơn phương pháp của mình
-    #  2. Đọc các bài báo cũ để triển khai thành code
-    #  3. Nhanh lên thời gian có hạn
 
     for i in range(len(images_)):
         start_time = time.time()
