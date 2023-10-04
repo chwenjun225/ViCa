@@ -11,7 +11,7 @@ from ultralytics import YOLO
 from pyzbar.pyzbar import decode
 
 from RealESRGAN import RealESRGAN
-import The_Archs.RRDBNet_arch as arch_
+import Functions.Main_App_Version.The_Archs.RRDBNet_arch as arch_
 
 from Functions.config_app import *
 
@@ -215,36 +215,52 @@ def update_main_display():
 
 def Super_Resolution_Image(images_):
     """
+
+    :param images_:
+    :return:
+    """
+    for i in range(len(images_)):
+        REALESRGAN_ImageProcessing(image_=images_[i])
+
+
+def REALESRGAN_ImageProcessing(image_):
+    """
     Implement ESRGAN: Enhanced Super-Resolution Generative Adversarial Networks
     Link: https://paperswithcode.com/paper/esrgan-enhanced-super-resolution-generative
     :param images_:
     :return:
     """
+    start_time = time.time()
 
-    for i in range(len(images_)):
-        start_time = time.time()
 
-        # image = images_[i] * 1.0 / 255
-        # image = torch.from_numpy(np.transpose(image[:, :, [2, 1, 0]], (2, 0, 1))).float()
-        # image_LR = image.unsqueeze(0)
-        # image_LR = image_LR.to(DEVICE)
 
-        # with torch.no_grad():
-        #     time.sleep(0.05)
-        #     output = MODEL_ESRGAN(image_LR).data.squeeze().float().cpu().clamp_(0, 1).numpy()
+    image_pil = IMAGE_PIL.fromarray(image_).convert('RGB')
+    sr_image = MODEL_REAL_ESRGAN.predict(image_pil)
 
-        image_pil = IMAGE_PIL.fromarray(images_[i]).convert('RGB')
-        sr_image = MODEL_REAL_ESRGAN.predict(image_pil)
+    sr_image = np.array(sr_image)
 
-        sr_image = np.array(sr_image)
+    output = Read_Barcode_QRCode(sr_image)
 
-        output = Read_Barcode_QRCode(sr_image)
+    file_name = datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S-%f')[:-3] + ".jpg"
+    cv2.imwrite(PATH_SAVE_INPUT_FILES + file_name, image_)
+    cv2.imwrite(PATH_SAVE_OUTPUT_FILES + file_name, output)
+    end_time = time.time()
+    print(f"--- REAL_ESRGAN time reference:", (end_time - start_time) * 10 ** 3, "ms")
 
-        file_name = datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S-%f')[:-3] + ".jpg"
-        cv2.imwrite(PATH_SAVE_INPUT_FILES + file_name, images_[i])
-        cv2.imwrite(PATH_SAVE_OUTPUT_FILES + file_name, output)
-        end_time = time.time()
-        print("The time of Enhance Super Resolution Image is:", (end_time - start_time) * 10 ** 3, "ms")
+
+def ESRGAN_ImageProcessing():
+    """
+
+    :return:
+    """
+    image = images_[i] * 1.0 / 255
+    image = torch.from_numpy(np.transpose(image[:, :, [2, 1, 0]], (2, 0, 1))).float()
+    image_LR = image.unsqueeze(0)
+    image_LR = image_LR.to(DEVICE)
+
+    with torch.no_grad():
+        time.sleep(0.05)
+        output = MODEL_ESRGAN(image_LR).data.squeeze().float().cpu().clamp_(0, 1).numpy()
 
 
 def Read_Barcode_QRCode(image):
