@@ -245,6 +245,7 @@ def REALESRGAN_ImageProcessing(images_):
         cv2.imwrite(PATH_SAVE_OUTPUT_FILES + file_name, img_output)
         end_time = time.time()
         print(f"--- REAL_ESRGAN time reference:", (end_time - start_time) * 10 ** 3, "ms")
+    print("\n")
 
 
 def ESRGAN_ImageProcessing(images_):
@@ -271,6 +272,7 @@ def ESRGAN_ImageProcessing(images_):
         cv2.imwrite(PATH_SAVE_OUTPUT_FILES + file_name, img_output)
         end_time = time.time()
         print(f"--- ESRGAN time reference:", (end_time - start_time) * 10 ** 3, "ms")
+    print("\n")
 
 
 def Read_Barcode_QRCode(image):
