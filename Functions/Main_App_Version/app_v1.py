@@ -79,6 +79,7 @@ if "Init_WINDOW":
     if "SR-GAN":
         print("--- SR-GAN successfully applied...")
 
+
 # ==================================================DEFINE COMPONENTS====================================================== #
 
 
@@ -219,41 +220,40 @@ def Super_Resolution_Image(images_):
     :param images_:
     :return:
     """
-    for i in range(len(images_)):
-        REALESRGAN_ImageProcessing(image_=images_[i])
+
+    REALESRGAN_ImageProcessing(images_=images_)
 
 
-def REALESRGAN_ImageProcessing(image_):
+def REALESRGAN_ImageProcessing(images_):
     """
     Implement ESRGAN: Enhanced Super-Resolution Generative Adversarial Networks
     Link: https://paperswithcode.com/paper/esrgan-enhanced-super-resolution-generative
     :param images_:
     :return:
     """
-    start_time = time.time()
+    for i in range(len(images_)):
+        start_time = time.time()
+
+        image_pil = IMAGE_PIL.fromarray(images_[i]).convert('RGB')
+        sr_image = MODEL_REAL_ESRGAN.predict(image_pil)
+
+        sr_image = np.array(sr_image)
+
+        output = Read_Barcode_QRCode(sr_image)
+
+        file_name = datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S-%f')[:-3] + ".jpg"
+        cv2.imwrite(PATH_SAVE_INPUT_FILES + file_name, images_[i])
+        cv2.imwrite(PATH_SAVE_OUTPUT_FILES + file_name, output)
+        end_time = time.time()
+        print(f"--- REAL_ESRGAN time reference:", (end_time - start_time) * 10 ** 3, "ms")
 
 
-
-    image_pil = IMAGE_PIL.fromarray(image_).convert('RGB')
-    sr_image = MODEL_REAL_ESRGAN.predict(image_pil)
-
-    sr_image = np.array(sr_image)
-
-    output = Read_Barcode_QRCode(sr_image)
-
-    file_name = datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S-%f')[:-3] + ".jpg"
-    cv2.imwrite(PATH_SAVE_INPUT_FILES + file_name, image_)
-    cv2.imwrite(PATH_SAVE_OUTPUT_FILES + file_name, output)
-    end_time = time.time()
-    print(f"--- REAL_ESRGAN time reference:", (end_time - start_time) * 10 ** 3, "ms")
-
-
-def ESRGAN_ImageProcessing():
+def ESRGAN_ImageProcessing(img):
     """
 
     :return:
     """
-    image = images_[i] * 1.0 / 255
+    image = img[i] * 1.0 / 255
     image = torch.from_numpy(np.transpose(image[:, :, [2, 1, 0]], (2, 0, 1))).float()
     image_LR = image.unsqueeze(0)
     image_LR = image_LR.to(DEVICE)
