@@ -46,13 +46,13 @@ if "Init_WINDOW":
 
     # Initialize YOLOv8 model
     MODEL_YOLO_V8 = YOLO(PATH_MODEL_YOLO_V8)
-    print("MODEL_YOLO_V8 successfully applied...")
+    print("--- MODEL_YOLO_V8 successfully applied...")
 
     # Initialize Super-Resolution models
     if "REAL-ESRGAN":
         MODEL_REAL_ESRGAN = RealESRGAN(DEVICE, scale=4)
         MODEL_REAL_ESRGAN.load_weights(PATH_MODEL_REAL_ESRGAN, download=False)
-        print("MODEL_REAL_ESRGAN successfully applied...")
+        print("--- MODEL_REAL_ESRGAN successfully applied...")
 
     if "ESR-GAN":
         MODEL_ESRGAN = arch_.RRDBNet(3, 3, 64, 23, gc=32)
@@ -220,47 +220,57 @@ def Super_Resolution_Image(images_):
     :param images_:
     :return:
     """
+    # Xử lý ảnh với REAL-ESRGAN
+    REALESRGAN_ImageProcessing(images_)
 
-    REALESRGAN_ImageProcessing(images_=images_)
+    # Xử lý ảnh với ESRGAN
+    ESRGAN_ImageProcessing(images_)
 
 
 def REALESRGAN_ImageProcessing(images_):
     """
-    Implement ESRGAN: Enhanced Super-Resolution Generative Adversarial Networks
-    Link: https://paperswithcode.com/paper/esrgan-enhanced-super-resolution-generative
+    The implementation of Real-ESRGAN: Training Real-World Blind Super-Resolution with Pure Synthetic Data
+    Paper link: https://arxiv.org/pdf/2107.10833v2.pdf
     :param images_:
     :return:
     """
     for i in range(len(images_)):
         start_time = time.time()
-
         image_pil = IMAGE_PIL.fromarray(images_[i]).convert('RGB')
-        sr_image = MODEL_REAL_ESRGAN.predict(image_pil)
-
-        sr_image = np.array(sr_image)
-
-        output = Read_Barcode_QRCode(sr_image)
-
-        file_name = datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S-%f')[:-3] + ".jpg"
+        sr_img = MODEL_REAL_ESRGAN.predict(image_pil)
+        sr_img = np.array(sr_img)
+        img_output = Read_Barcode_QRCode(sr_img)
+        file_name = "REAL_ESRGAN_" + datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S-%f')[:-3] + ".jpg"
         cv2.imwrite(PATH_SAVE_INPUT_FILES + file_name, images_[i])
-        cv2.imwrite(PATH_SAVE_OUTPUT_FILES + file_name, output)
+        cv2.imwrite(PATH_SAVE_OUTPUT_FILES + file_name, img_output)
         end_time = time.time()
         print(f"--- REAL_ESRGAN time reference:", (end_time - start_time) * 10 ** 3, "ms")
 
 
-def ESRGAN_ImageProcessing(img):
+def ESRGAN_ImageProcessing(images_):
     """
-
+    The implement ESRGAN: Enhanced Super-Resolution Generative Adversarial Networks
+    Paper link: https://paperswithcode.com/paper/esrgan-enhanced-super-resolution-generative
+    :param images_:
     :return:
     """
-    image = img[i] * 1.0 / 255
-    image = torch.from_numpy(np.transpose(image[:, :, [2, 1, 0]], (2, 0, 1))).float()
-    image_LR = image.unsqueeze(0)
-    image_LR = image_LR.to(DEVICE)
+    for i in range(len(images_)):
+        start_time = time.time()
+        img = images_[i] * 1.0 / 255
+        img = torch.from_numpy(np.transpose(img[:, :, [2, 1, 0]], (2, 0, 1))).float()
+        img_LR = img.unsqueeze(0)
+        img_LR = img_LR.to(DEVICE)
 
-    with torch.no_grad():
-        time.sleep(0.05)
-        output = MODEL_ESRGAN(image_LR).data.squeeze().float().cpu().clamp_(0, 1).numpy()
+        with torch.no_grad():
+            time.sleep(0.05)
+            img_output = MODEL_ESRGAN(img_LR).data.squeeze().float().cpu().clamp_(0, 1).numpy()
+        img_output = np.transpose(img_output[[2, 1, 0], :, :], (1, 2, 0))
+        img_output = Read_Barcode_QRCode(img_output)
+        img_output = (img_output * 255.0).round()
+        file_name = "ESRGAN_" + datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S-%f')[:-3] + ".jpg"
+        cv2.imwrite(PATH_SAVE_OUTPUT_FILES + file_name, img_output)
+        end_time = time.time()
+        print(f"--- ESRGAN time reference:", (end_time - start_time) * 10 ** 3, "ms")
 
 
 def Read_Barcode_QRCode(image):

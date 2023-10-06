@@ -8,7 +8,7 @@ INITIAL_DIR = ROOT_PATH + "Data/Labels_Factory"
 
 IMAGE_PIL = PIL.Image
 
-TITLE_WINDOW = "AICT-LAB-702 - National Kaohsiung University Science and Technology"
+TITLE_WINDOW = "AICT-LAB-705 - National Kaohsiung University Science and Technology"
 ICON_WINDOW = ROOT_PATH + "Icons/icon_nkust.ico"
 
 # Kích thước cửa sổ của App
