@@ -61,8 +61,11 @@ if "Init_WINDOW":
         MODEL_ESRGAN = MODEL_ESRGAN.to(DEVICE)
         print("--- ESR-GAN successfully applied...")
 
-    if "DAN":
-        print("--- DAN successfully applied...")
+    if "SR-GAN":
+        print("--- SR-GAN successfully applied...")
+
+    # if "DAN":
+    #     print("--- DAN successfully applied...")
 
     if "CDC":
         print("--- CDC successfully applied...")
@@ -75,9 +78,6 @@ if "Init_WINDOW":
 
     if "AC-GAN":
         print("--- AC-GAN successfully applied...")
-
-    if "SR-GAN":
-        print("--- SR-GAN successfully applied...")
 
 
 # ==================================================DEFINE COMPONENTS====================================================== #
@@ -231,7 +231,7 @@ def REALESRGAN_ImageProcessing(images_):
     """
     The implementation of Real-ESRGAN: Training Real-World Blind Super-Resolution with Pure Synthetic Data
     Paper link: https://arxiv.org/pdf/2107.10833v2.pdf
-    :param images_:
+    :param images_: list[array]
     :return:
     """
     for i in range(len(images_)):
@@ -244,7 +244,7 @@ def REALESRGAN_ImageProcessing(images_):
         cv2.imwrite(PATH_SAVE_INPUT_FILES + file_name, images_[i])
         cv2.imwrite(PATH_SAVE_OUTPUT_FILES + file_name, img_output)
         end_time = time.time()
-        print(f"--- REAL_ESRGAN time reference:", (end_time - start_time) * 10 ** 3, "ms")
+        print(f"--- REAL_ESRGAN time reference:", round((end_time - start_time) * 10 ** 3), "ms")
     print("\n")
 
 
@@ -252,7 +252,7 @@ def ESRGAN_ImageProcessing(images_):
     """
     The implement ESRGAN: Enhanced Super-Resolution Generative Adversarial Networks
     Paper link: https://paperswithcode.com/paper/esrgan-enhanced-super-resolution-generative
-    :param images_:
+    :param images_: list[array]
     :return:
     """
     for i in range(len(images_)):
@@ -263,7 +263,6 @@ def ESRGAN_ImageProcessing(images_):
         img_LR = img_LR.to(DEVICE)
 
         with torch.no_grad():
-            time.sleep(0.05)
             img_output = MODEL_ESRGAN(img_LR).data.squeeze().float().cpu().clamp_(0, 1).numpy()
         img_output = np.transpose(img_output[[2, 1, 0], :, :], (1, 2, 0))
         img_output = Read_Barcode_QRCode(img_output)
@@ -271,7 +270,7 @@ def ESRGAN_ImageProcessing(images_):
         file_name = "ESRGAN_" + datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S-%f')[:-3] + ".jpg"
         cv2.imwrite(PATH_SAVE_OUTPUT_FILES + file_name, img_output)
         end_time = time.time()
-        print(f"--- ESRGAN time reference:", (end_time - start_time) * 10 ** 3, "ms")
+        print(f"--- ESRGAN time reference:", round((end_time - start_time) * 10 ** 3), "ms")
     print("\n")
 
 
