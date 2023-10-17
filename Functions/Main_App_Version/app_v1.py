@@ -67,8 +67,8 @@ if "Init_WINDOW":
     # if "DAN":
     #     print("--- DAN successfully applied...")
 
-    if "CDC":
-        print("--- CDC successfully applied...")
+    # if "CDC":
+    #     print("--- CDC successfully applied...")
 
     if "RESL-SR":
         print("--- RESL-SR successfully applied...")
