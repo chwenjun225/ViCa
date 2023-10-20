@@ -61,6 +61,9 @@ if "Init_WINDOW":
         MODEL_ESRGAN = MODEL_ESRGAN.to(DEVICE)
         print("--- ESR-GAN successfully applied...")
 
+    if "SwinIR":
+        print("--- SwinIR successfully applied...")
+
     if "SR-GAN":
         print("--- SR-GAN successfully applied...")
 
