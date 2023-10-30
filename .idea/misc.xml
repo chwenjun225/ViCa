@@ -3,5 +3,5 @@
   <component name="Black">
     <option name="sdkUUID" value="63565f3b-eb15-46e2-9eb5-f1f70dd4ffef" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.8 (Decode-barcode-image-using-YOLOv8-and-REAL-ESRGAN)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.8 (Decode-barcode-images-using-YOLOv8-and-REAL-ESRGAN)" project-jdk-type="Python SDK" />
 </project>
