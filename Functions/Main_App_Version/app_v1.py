@@ -219,7 +219,6 @@ def update_main_display():
 
 def Super_Resolution_Image(images_):
     """
-
     :param images_:
     :return:
     """
