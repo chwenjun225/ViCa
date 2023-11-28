@@ -4,12 +4,12 @@ import os
 
 ROOT_PATH = os.getcwd() + "/"
 
-INITIAL_DIR = ROOT_PATH + "Data/Labels_Factory"
+INITIAL_DIR = ROOT_PATH + "data/Labels_Factory"
 
 IMAGE_PIL = PIL.Image
 
 TITLE_WINDOW = "AICT-LAB-705 - National Kaohsiung University Science and Technology"
-ICON_WINDOW = ROOT_PATH + "Icons/icon_nkust.ico"
+ICON_WINDOW = ROOT_PATH + "icons/nkust.ico"
 
 # Kích thước cửa sổ của App
 WINDOW_WIDTH = 650
@@ -54,13 +54,13 @@ LABELS = {
 }
 
 # YOLOv8 model path
-PATH_MODEL_YOLO_V8 = ROOT_PATH + "Models/Model_YOLOv8/09_07_2023_08h59m/weights/best.pt"
+PATH_MODEL_YOLO_V8 = ROOT_PATH + "models/yolov8/09_07_2023_08h59m/weights/best.pt"
 
-# REAL-ESRGAN model path
-PATH_MODEL_REAL_ESRGAN = ROOT_PATH + "Models/Model_REAL_ESRGAN/REAL_ESRGAN_models/RealESRGAN_x4.pth"
+# REAL-esrgan model path
+PATH_MODEL_REAL_ESRGAN = ROOT_PATH + "models/realesrgan/realesrgan_model/RealESRGAN_x4.pth"
 
 # ESR-GAN model path
-PATH_MODEL_ESRGAN = ROOT_PATH + "Models/Model_REAL_ESRGAN/Previous_Works/ESRGAN/RRDB_ESRGAN_x4.pth"
+PATH_MODEL_ESRGAN = ROOT_PATH + "models/realesrgan/previous_works/esrgan/RRDB_ESRGAN_x4.pth"
 
 # DAN model path
 PATH_MODEL_DAN = ROOT_PATH + ""
@@ -89,9 +89,9 @@ VIDEO_SOURCE = 0
 # Delay update frame
 DELAY_UPDATE_FRAME = 1
 
-# Save dir-in, dir-out
-PATH_SAVE_INPUT_FILES = ROOT_PATH + "Reports/Save_Inputs" + "/"
-PATH_SAVE_OUTPUT_FILES = ROOT_PATH + "Reports/Save_Outputs" + "/"
+# Save directory-input, directory-output
+PATH_SAVE_INPUT_FILES = ROOT_PATH + "reports/Save_Inputs" + "/"
+PATH_SAVE_OUTPUT_FILES = ROOT_PATH + "reports/Save_Outputs" + "/"
 
 
 """

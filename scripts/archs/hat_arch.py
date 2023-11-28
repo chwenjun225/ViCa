@@ -710,7 +710,7 @@ class Upsample(nn.Sequential):
 class HAT(nn.Module):
     r""" Hybrid Attention Transformer
         A PyTorch implementation of : `Activating More Pixels in Image Super-Resolution Transformer`.
-        Some codes are based on SwinIR.
+        Some scripts are based on SwinIR.
     Args:
         img_size (int | tuple(int)): Input image size. Default 64
         patch_size (int | tuple(int)): Patch size. Default: 1

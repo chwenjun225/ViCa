@@ -11,9 +11,9 @@ from ultralytics import YOLO
 from pyzbar.pyzbar import decode
 
 from RealESRGAN import RealESRGAN
-import Functions.Main_App_Version.The_Archs.RRDBNet_arch as arch_
+import scripts.archs.RRDBNet_arch as arch_
 
-from Functions.config_app import *
+from scripts.config import *
 
 # ================================================== INIT DEFAULT SETTINGS ================================================== #
 if "Init_WINDOW":
@@ -49,7 +49,7 @@ if "Init_WINDOW":
     print("--- MODEL_YOLO_V8 successfully applied...")
 
     # Initialize Super-Resolution models
-    if "REAL-ESRGAN":
+    if "REAL-esrgan":
         MODEL_REAL_ESRGAN = RealESRGAN(DEVICE, scale=4)
         MODEL_REAL_ESRGAN.load_weights(PATH_MODEL_REAL_ESRGAN, download=False)
         print("--- MODEL_REAL_ESRGAN successfully applied...")
@@ -222,16 +222,16 @@ def Super_Resolution_Image(images_):
     :param images_:
     :return:
     """
-    # Xử lý ảnh với REAL-ESRGAN
+    # Xử lý ảnh với REAL-esrgan
     REALESRGAN_ImageProcessing(images_)
 
-    # Xử lý ảnh với ESRGAN
+    # Xử lý ảnh với esrgan
     ESRGAN_ImageProcessing(images_)
 
 
 def REALESRGAN_ImageProcessing(images_):
     """
-    The implementation of Real-ESRGAN: Training Real-World Blind Super-Resolution with Pure Synthetic Data
+    The implementation of Real-esrgan: Training Real-World Blind Super-Resolution with Pure Synthetic data
     Paper link: https://arxiv.org/pdf/2107.10833v2.pdf
     :param images_: list[array]
     :return:
@@ -252,7 +252,7 @@ def REALESRGAN_ImageProcessing(images_):
 
 def ESRGAN_ImageProcessing(images_):
     """
-    The implement ESRGAN: Enhanced Super-Resolution Generative Adversarial Networks
+    The implement esrgan: Enhanced Super-Resolution Generative Adversarial Networks
     Paper link: https://paperswithcode.com/paper/esrgan-enhanced-super-resolution-generative
     :param images_: list[array]
     :return:
@@ -272,7 +272,7 @@ def ESRGAN_ImageProcessing(images_):
         file_name = "ESRGAN_" + datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S-%f')[:-3] + ".jpg"
         cv2.imwrite(PATH_SAVE_OUTPUT_FILES + file_name, img_output)
         end_time = time.time()
-        print(f"--- ESRGAN time reference:", round((end_time - start_time) * 10 ** 3), "ms")
+        print(f"--- esrgan time reference:", round((end_time - start_time) * 10 ** 3), "ms")
     print("\n")
 
 

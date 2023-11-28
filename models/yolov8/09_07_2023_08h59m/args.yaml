@@ -1,7 +1,7 @@
 task: detect
 mode: train
 model: yolov8n.pt
-data: /rhome/f111169109/Training_F111169109/datasets/Barcodes-5/Data.yaml
+data: /rhome/f111169109/Training_F111169109/datasets/Barcodes-5/data.yaml
 epochs: 500
 patience: 500
 batch: 16
