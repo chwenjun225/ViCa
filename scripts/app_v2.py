@@ -69,7 +69,6 @@ def result_from_yolov8(image):
 
 
 if __name__ == "__main__":
-
     MODEL_YOLOV8 = load_model_yolov8()
     MODEL_REALESRGAN = load_model_realesrgan()
 
@@ -80,18 +79,15 @@ if __name__ == "__main__":
         ret, frame = cap.read()
         if not ret:
             print("Can't receive frame (stream end?). Exiting ...")
-            exit()
+            break
 
         ret_from_yolov8 = result_from_yolov8(image=frame)
-
         realesrgan_image_processing(images_=ret_from_yolov8[1])
-
-        image_resize = cv2.resize(ret_from_yolov8[0], (1000, 800), interpolation=cv2.INTER_AREA)
-
+        image_resize = cv2.resize(ret_from_yolov8[0], (800, 600), interpolation=cv2.INTER_AREA)
         cv2.imshow('image_resize', image_resize)
         if cv2.waitKey(45) == ord('q'):
-
             break
+
     cap.release()
     cv2.destroyAllWindows()
 

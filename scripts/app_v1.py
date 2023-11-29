@@ -11,12 +11,12 @@ from ultralytics import YOLO
 from pyzbar.pyzbar import decode
 
 from RealESRGAN import RealESRGAN
-import scripts.archs.RRDBNet_arch as arch_
+import scripts.archs.RRDBNet_arch as arch
 
 from scripts.config import *
 
 # ================================================== INIT DEFAULT SETTINGS ================================================== #
-if "Init_WINDOW":
+if "init_window":
     window = Tk()
 
     SCREEN_MONITOR_WIDTH = window.winfo_screenwidth()
@@ -55,17 +55,17 @@ if "Init_WINDOW":
         print("--- MODEL_REAL_ESRGAN successfully applied...")
 
     if "ESR-GAN":
-        MODEL_ESRGAN = arch_.RRDBNet(3, 3, 64, 23, gc=32)
+        MODEL_ESRGAN = arch.RRDBNet(3, 3, 64, 23, gc=32)
         MODEL_ESRGAN.load_state_dict(torch.load(PATH_MODEL_ESRGAN), strict=True)
         MODEL_ESRGAN.eval()
         MODEL_ESRGAN = MODEL_ESRGAN.to(DEVICE)
         print("--- ESR-GAN successfully applied...")
 
-    if "SwinIR":
-        print("--- SwinIR successfully applied...")
+    # if "SwinIR":
+    #     print("--- SwinIR successfully applied...")
 
-    if "SR-GAN":
-        print("--- SR-GAN successfully applied...")
+    # if "SR-GAN":
+    #     print("--- SR-GAN successfully applied...")
 
     # if "DAN":
     #     print("--- DAN successfully applied...")
@@ -73,14 +73,14 @@ if "Init_WINDOW":
     # if "CDC":
     #     print("--- CDC successfully applied...")
 
-    if "RESL-SR":
-        print("--- RESL-SR successfully applied...")
+    # if "RESL-SR":
+    #     print("--- RESL-SR successfully applied...")
 
-    if "BSR-GAN":
-        print("--- BSR-GAN successfully applied...")
+    # if "BSR-GAN":
+    #     print("--- BSR-GAN successfully applied...")
 
-    if "AC-GAN":
-        print("--- AC-GAN successfully applied...")
+    # if "AC-GAN":
+    #     print("--- AC-GAN successfully applied...")
 
 
 # ==================================================DEFINE COMPONENTS====================================================== #
@@ -213,53 +213,53 @@ def update_main_display():
             yolov8_results = get_result_yolov8(resize_width_height_yolov8(frame))  # Trả về ảnh barcode đã được cắt theo tọa độ để super-resolution nó
 
             display_main_image_result_from_yolov8(image=yolov8_results[0])
-            Super_Resolution_Image(images_=yolov8_results[1])
+            super_resolution_image(images=yolov8_results[1])
         display_img0.after(DELAY_UPDATE_FRAME, update_main_display)  # Call the function after "DELAY_UPDATE_FRAME" milliseconds
 
 
-def Super_Resolution_Image(images_):
+def super_resolution_image(images):
     """
-    :param images_:
+    :param images:
     :return:
     """
     # Xử lý ảnh với REAL-esrgan
-    REALESRGAN_ImageProcessing(images_)
+    realesrgan_image_processing(images)
 
     # Xử lý ảnh với esrgan
-    ESRGAN_ImageProcessing(images_)
+    esrgan_image_processing(images)
 
 
-def REALESRGAN_ImageProcessing(images_):
+def realesrgan_image_processing(images):
     """
     The implementation of Real-esrgan: Training Real-World Blind Super-Resolution with Pure Synthetic data
     Paper link: https://arxiv.org/pdf/2107.10833v2.pdf
-    :param images_: list[array]
+    :param images: list[array]
     :return:
     """
-    for i in range(len(images_)):
+    for i in range(len(images)):
         start_time = time.time()
-        image_pil = IMAGE_PIL.fromarray(images_[i]).convert('RGB')
+        image_pil = IMAGE_PIL.fromarray(images[i]).convert('RGB')
         sr_img = MODEL_REAL_ESRGAN.predict(image_pil)
         sr_img = np.array(sr_img)
-        img_output = Read_Barcode_QRCode(sr_img)
+        img_output = decode_barcodes(sr_img)
         file_name = "REAL_ESRGAN_" + datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S-%f')[:-3] + ".jpg"
-        cv2.imwrite(PATH_SAVE_INPUT_FILES + file_name, images_[i])
+        cv2.imwrite(PATH_SAVE_INPUT_FILES + file_name, images[i])
         cv2.imwrite(PATH_SAVE_OUTPUT_FILES + file_name, img_output)
         end_time = time.time()
         print(f"--- REAL_ESRGAN time reference:", round((end_time - start_time) * 10 ** 3), "ms")
     print("\n")
 
 
-def ESRGAN_ImageProcessing(images_):
+def esrgan_image_processing(images):
     """
     The implement esrgan: Enhanced Super-Resolution Generative Adversarial Networks
     Paper link: https://paperswithcode.com/paper/esrgan-enhanced-super-resolution-generative
-    :param images_: list[array]
+    :param images: list[array]
     :return:
     """
-    for i in range(len(images_)):
+    for i in range(len(images)):
         start_time = time.time()
-        img = images_[i] * 1.0 / 255
+        img = images[i] * 1.0 / 255
         img = torch.from_numpy(np.transpose(img[:, :, [2, 1, 0]], (2, 0, 1))).float()
         img_LR = img.unsqueeze(0)
         img_LR = img_LR.to(DEVICE)
@@ -267,7 +267,7 @@ def ESRGAN_ImageProcessing(images_):
         with torch.no_grad():
             img_output = MODEL_ESRGAN(img_LR).data.squeeze().float().cpu().clamp_(0, 1).numpy()
         img_output = np.transpose(img_output[[2, 1, 0], :, :], (1, 2, 0))
-        img_output = Read_Barcode_QRCode(img_output)
+        img_output = decode_barcodes(img_output)
         img_output = (img_output * 255.0).round()
         file_name = "ESRGAN_" + datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S-%f')[:-3] + ".jpg"
         cv2.imwrite(PATH_SAVE_OUTPUT_FILES + file_name, img_output)
@@ -276,7 +276,7 @@ def ESRGAN_ImageProcessing(images_):
     print("\n")
 
 
-def Read_Barcode_QRCode(image):
+def decode_barcodes(image):
     for d in decode(image):
         cv2.rectangle(image, (d.rect.left, d.rect.top), (d.rect.left + d.rect.width, d.rect.top + d.rect.height), (255, 0, 0), 2)
         cv2.polylines(image, [np.array(d.polygon)], True, (0, 255, 0), 2)
@@ -298,19 +298,20 @@ def ask_open_file():
         initialdir=INITIAL_DIR,
         title="Select A File",
         filetypes=[("all files", "*.*"), ("jpg files", "*.jpg"), ("png files", "*.png"), ("mp4 files", "*.mp4")])
-    # try:
-    path = window.filename.name
-    image = cv2.imread(path)
-    handle_image(image)
-    # except Exception as e:
-    #     print("[INFO] Error: " + f"{e}" + " ===> " + "Please choose file type (.jpg, .png, .mp4)")
+    try:
+        path = window.filename.name
+        image = cv2.imread(path)
+        handle_image(image)
+    except Exception as e:
+        print("[INFO] Error: " + f"{e}" + " ===> " + "Please choose file type (.jpg, .png, .mp4)")
+        pass
 
 
 def handle_image(image_param):
     img_wh_yolov8 = resize_width_height_yolov8(image_param)
     result_yolov8 = get_result_yolov8(img_wh_yolov8)
 
-    Super_Resolution_Image(images_=result_yolov8[1])
+    super_resolution_image(images=result_yolov8[1])
     update_img0(result_yolov8[0])
 
 
@@ -352,14 +353,13 @@ def get_result_yolov8(image):
         detections=detections_,
         labels=labels
     )
-
     return ret, lst_crop_img_barcodes
 
 
-def update_present_time_():
+def update_present_time():
     my_time = datetime.now().strftime("%m/%d/%Y\n%I:%M:%S %p")
     display_time.config(text=my_time)
-    display_time.after(1000, update_present_time_)
+    display_time.after(1000, update_present_time)
 
 
 def system_exit_():
