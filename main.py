@@ -1,4 +1,4 @@
-from scripts import app_v1 as sddle
+from scripts import app_v1 as app
 
 if __name__ == '__main__':
-    sddle.main()
+    app.main()
