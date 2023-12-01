@@ -5,7 +5,7 @@ from tkinter import font, filedialog
 
 import cv2
 import numpy as np
-import supervision
+import supervision as sv
 import PIL.ImageTk, PIL.Image
 from ultralytics import YOLO
 from pyzbar.pyzbar import decode
@@ -331,13 +331,13 @@ def update_img0(image_param):
 def get_result_yolov8(image):
     image_copy = image.copy()
 
-    box_annotator = supervision.BoxAnnotator(
+    box_annotator = sv.BoxAnnotator(
         thickness=1,
         text_thickness=1,
         text_scale=0.5,
         text_padding=2)
     result = MODEL_YOLO_V8(image)[0]
-    detections_ = supervision.Detections.from_yolov8(result)
+    detections_ = sv.Detections.from_yolov8(result)
 
     lst_crop_img_barcodes = []
     for num_ in detections_.xyxy:
@@ -373,3 +373,7 @@ def main():
     App()
     window.bind("<Control-o>", lambda x: ask_open_file())
     window.mainloop()
+
+
+if __name__ == '__main__':
+    main()
