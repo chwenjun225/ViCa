@@ -104,9 +104,7 @@ class Ui_MainWindow1(object):
         self.display_status_ok_ng.setFont(font)
         self.display_status_ok_ng.setLayoutDirection(QtCore.Qt.LayoutDirection.LeftToRight)
         self.display_status_ok_ng.setAutoFillBackground(False)
-        self.display_status_ok_ng.setStyleSheet("background-color: rgb(85, 255, 255);\n"
-"border-color: rgb(0, 0, 0);\n"
-"")
+        self.display_status_ok_ng.setStyleSheet("background-color: rgb(85, 255, 255);\n""border-color: rgb(0, 0, 0);\n""")
         self.display_status_ok_ng.setFrameShape(QtWidgets.QFrame.Shape.WinPanel)
         self.display_status_ok_ng.setText("...")
         self.display_status_ok_ng.setTextFormat(QtCore.Qt.TextFormat.AutoText)

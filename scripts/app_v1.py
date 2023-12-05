@@ -54,12 +54,12 @@ if "init_window":
         MODEL_REAL_ESRGAN.load_weights(PATH_MODEL_REAL_ESRGAN, download=False)
         print("--- MODEL_REAL_ESRGAN successfully applied...")
 
-    if "ESR-GAN":
-        MODEL_ESRGAN = arch.RRDBNet(3, 3, 64, 23, gc=32)
-        MODEL_ESRGAN.load_state_dict(torch.load(PATH_MODEL_ESRGAN), strict=True)
-        MODEL_ESRGAN.eval()
-        MODEL_ESRGAN = MODEL_ESRGAN.to(DEVICE)
-        print("--- ESR-GAN successfully applied...")
+    # if "ESR-GAN":
+    #     MODEL_ESRGAN = arch.RRDBNet(3, 3, 64, 23, gc=32)
+    #     MODEL_ESRGAN.load_state_dict(torch.load(PATH_MODEL_ESRGAN), strict=True)
+    #     MODEL_ESRGAN.eval()
+    #     MODEL_ESRGAN = MODEL_ESRGAN.to(DEVICE)
+    #     print("--- ESR-GAN successfully applied...")
 
     # if "SwinIR":
     #     print("--- SwinIR successfully applied...")
@@ -226,7 +226,7 @@ def super_resolution_image(images):
     realesrgan_image_processing(images)
 
     # Xử lý ảnh với esrgan
-    esrgan_image_processing(images)
+    # esrgan_image_processing(images)
 
 
 def realesrgan_image_processing(images):
