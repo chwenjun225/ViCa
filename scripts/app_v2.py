@@ -1,13 +1,61 @@
+import torch
 import time
-import datetime
 import cv2
 import numpy as np
 import supervision
 from ultralytics import YOLO
 from pyzbar.pyzbar import decode
 from RealESRGAN import RealESRGAN
-from archs import RRDBNet_arch
-from scripts.config import *
+
+
+# Tất cả các ảnh đầu vào đều được resize với kích thước "YOLOv8_IMAGE_INPUT_SIZE"
+YOLOv8_IMAGE_INPUT_SIZE = [416, 416]
+
+# Label các đối tượng
+LABELS = {
+    0: "Barcode",
+    1: "QR_code"
+}
+
+# YOLOv8 model path
+PATH_MODEL_YOLO_V8 = ""
+
+# REAL-esrgan model path
+PATH_MODEL_REAL_ESRGAN = ""
+
+# ESR-GAN model path
+PATH_MODEL_ESRGAN = ""
+
+# DAN model path
+PATH_MODEL_DAN = ""
+
+# CDC model path
+PATH_MODEL_CDC = ""
+
+# REAL-SR model path
+PATH_MODEL_REALSR = ""
+
+# BSR-GAN model path
+PATH_MODEL_BSRGAN = ""
+
+# AC-GAN model path
+PATH_MODEL_ACGAN = ""
+
+# SR-GAN model path
+PATH_MODEL_SRGAN = ""
+
+# DEVICE GPU or CPU
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+
+# Webcam
+VIDEO_SOURCE = 0
+
+# Delay update frame
+DELAY_UPDATE_FRAME = 1
+
+# Save directory-input, directory-output
+PATH_SAVE_INPUT_FILES = ""
+PATH_SAVE_OUTPUT_FILES = ""
 
 
 def load_model_yolov8(path_=PATH_MODEL_YOLO_V8):
