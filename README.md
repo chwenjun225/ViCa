@@ -1,4 +1,4 @@
-# Image processing with Yolov8 and Real-ESRGan
+# Image processing with Yolov8 and Real-ESRGAN
 
 The machine learning system integrated Object Detection and Image Super-Resolution to decode barcode images for real-time video processing for Industrial Applications 🚀🚀🚀
 
