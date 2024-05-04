@@ -14,7 +14,7 @@ if "def":
     def save_image(image_param, path_save_image, format_save_image=".jpg"):
         now = datetime.now()
         time.sleep(1)
-        fileName = datetime.utcnow().strftime('%Y-%m-%d_%H-%M-%S-%f')[:-3] + ".jpg"
+        fileName = datetime.utcnow().strftime('%Y-%m-%d__%H-%M-%S-%f')[:-3] + ".jpg"
         path_save_image = path_save_image + fileName + format_save_image
         cv2.imwrite(path_save_image, image_param)
         print(f"Image saved successfully at {path_save_image}")
