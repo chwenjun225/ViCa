@@ -1,3 +1,0 @@
-- RealSR
-- Kết quả triển khai DIV2K trên ảnh barcode với "pretrained_model"
-- Hãy đính kèm nó vào file so sánh
