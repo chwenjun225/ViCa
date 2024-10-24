@@ -19,7 +19,7 @@ class DataFile:
 
     def __str__(self):
         return str(self.attr) 
-    
+
 class SampleData:
     """Holder of data files of an sample."""
     def __init__(self, attr):
