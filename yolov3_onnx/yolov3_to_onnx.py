@@ -425,28 +425,311 @@ class GraphBuilderONNX(object):
         return model_def 
 
     def _make_onnx_node(self, layer_name, layer_dict):
-        pass 
+        """Take in a layer parameter dictionary, choose the correct 
+        function for creating an ONNX node and store the information 
+        important to graph creation as a MajorNodeSpec object. 
+        
+        Keyword arguments:
+            layer_name -- the layer's name (also the corresponding key
+                in layer_configs)
+            layer_dict -- a layer parameter dictionary (one element
+                of layer_configs)
+        """
+        layer_type = layer_dict["type"]
+        if self.input_tensor is None:
+            if layer_type == "net":
+                major_node_output_name, major_node_output_channels = (
+                    self._make_input_tensor(layer_name, layer_dict)
+                )
+                major_node_specs = MajorNodeSpecs(
+                    major_node_output_name, major_node_output_channels
+                )
+            else:
+                raise ValueError('The first node has to be of type "net".')
+        else:
+            node_creators = dict()
+            node_creators["convolutional"] = self._make_conv_node 
+            node_creators["shortcut"] = self._make_shortcut_node
+            node_creators["route"] = self._make_route_node 
+            node_creators["upsample"] = self._make_resize_node 
+
+            if layer_type in node_creators.keys():
+                major_node_output_name, major_node_output_channels = node_creators[
+                    layer_type
+                ](layer_name, layer_dict)
+                major_node_specs = MajorNodeSpecs(
+                    major_node_output_name, major_node_output_channels
+                )
+            else:
+                print(
+                    "Layer of type %s not supported, skipping ONNX node generation." % layer_type
+                )
+                major_node_specs = MajorNodeSpecs(layer_name, None)
+        return major_node_specs 
 
     def _make_input_tensor(self, layer_name, layer_dict):
-        pass 
+        """Create an ONNX input tensor from a 'net' layer and store the 
+        batch size. 
+        
+        Keyword arguments:
+            layer_name -- the layer's name (also the corresponding key 
+                in layer_configs)
+            layer_dict -- a layer parameter dictionary (one element of 
+                layer_configs)
+        """
+        batch_size = layer_dict["batch"]
+        channels = layer_dict["channels"]
+        height = layer_dict["height"]
+        width = layer_dict["width"]
+        self.batch_size = batch_size
+        input_tensor = helper.make_tensor_value_info(
+            str(layer_name), TensorProto.FLOAT, 
+            [batch_size, channels, height, width]
+        )
+        self.input_tensor = input_tensor
+        return layer_name, channels 
 
     def _get_previous_node_specs(self, target_index=-1):
-        pass 
+        """Get a previously generated ONNX node (skip those that were
+        not generated). Target index can be passed for jumping to a 
+        specific index. 
+        
+        Keyword arguments:
+            target_index -- optional for jumping to a specific index (
+                default: -1 for jumping to previous element)
+        """
+        previous_node = None 
+        for node in self.major_node_specs[target_index::-1]:
+            if node.created_onnx_node:
+                previous_node = node 
+                break 
+        assert previous_node is not None 
+        return previous_node 
 
     def _make_conv_node(self, layer_name, layer_dict):
-        pass 
+        """Create an ONNX Conv node with optional batch normalization and 
+        activation nodes. 
+        
+        Keyword arguments:
+            layer_name -- the layer's name (also the corresponding key 
+                in layer_configs)
+            layer_dict -- a layer parameter dictionary (one element of layer_configs)
+        """
+        previous_node_specs = self._get_previous_node_specs()
+        inputs = [previous_node_specs.name]
+        previous_channels = previous_node_specs.channels 
+        kernel_size = layer_dict["size"]
+        stride = layer_dict["stride"]
+        filters = layer_dict["filters"]
+        batch_normalize = False 
+        if (
+            "batch_normalize" in layer_dict.keys() 
+            and layer_dict["batch_normalize"] == 1
+        ):
+            batch_normalize = True
+        kernel_shape = [kernel_size, kernel_size]
+        weights_shape = [filters, previous_channels] + kernel_shape 
+        conv_params = ConvParams(layer_name, batch_normalize, weights_shape)
+
+        strides = [stride, stride]
+        dilations = [1, 1]
+        weights_name = conv_params.generate_param_name("conv", "weights")
+        inputs.append(weights_name)
+        if not batch_normalize:
+            bias_name = conv_params.generate_param_name("conv", "bias")
+            inputs.append(bias_name)
+        conv_node = helper.make_node(
+            "Conv", 
+            inputs=inputs, 
+            outputs=[layer_name], 
+            kernel_shape=kernel_shape, 
+            strides=strides, 
+            auto_pad="SAME_LOWER", 
+            dilations=dilations, 
+            name=layer_name, 
+        )
+        self._nodes.append(conv_node)
+        inputs = [layer_name]
+        layer_name_output = layer_name 
+
+        if batch_normalize:
+            layer_name_bn = layer_name + "_bn"
+            bn_param_suffixes = ["scale", "bias", "mean", "var"]
+            for suffix in bn_param_suffixes:
+                bn_param_name = conv_params.generate_param_name("bn", suffix)
+                inputs.append(bn_param_name)
+            batchnorm_node = helper.make_node(
+                "BatchNormalization", 
+                inputs=inputs, 
+                outputs=[layer_name_bn], 
+                epsilon=self.epsilon_bn, 
+                momentum=self.momentum_bn, 
+                name=layer_name_bn, 
+            )
+            self._nodes.append(batchnorm_node)
+            inputs = [layer_name_bn]
+            layer_name_output = layer_name_bn 
+        if layer_dict["activation"] == "leaky":
+            layer_name_lrelu = layer_name + "_lrelu"
+            lrelu_node = helper.make_node(
+                "LeakyRelu", 
+                inputs=inputs, 
+                outputs=[layer_name_lrelu], 
+                name=layer_name_lrelu, 
+                alpha=self.alpha_lrelu, 
+            )
+            self._nodes.append(lrelu_node)
+            inputs = [layer_name_lrelu]
+            layer_name_output = layer_name_lrelu
+        elif layer_dict["activation"] == "linear":
+            pass 
+        else:
+            print("Activation not supported.")
+
+        self.param_dict[layer_name] = conv_params
+        return layer_name_output, filters 
 
     def _make_shortcut_node(self, layer_name, layer_dict):
-        pass 
+        """Create an ONNX Add node with the shortcut properties from the 
+        DarkNet-based graph. 
+        
+        Keyword arguments:
+            layer_name -- the layer's name (also the corresponding key 
+                in layer_configs)
+            layer_dict -- a layer parameter dictionary (one element of layer_configs)    
+        """
+        shortcut_index = layer_dict["from"]
+        activation = layer_dict["activation"]
+        assert activation == "linear"
+
+        first_node_specs = self._get_previous_node_specs()
+        second_node_specs = self._get_previous_node_specs(target_index=shortcut_index)
+        assert first_node_specs.channels == second_node_specs.channels 
+        channels = first_node_specs.channels 
+        inputs = [first_node_specs.name, second_node_specs.name]
+        shortcut_node = helper.make_node(
+            "Add", 
+            inputs=inputs, 
+            outputs=[layer_name], 
+            name=layer_name, 
+        )
+        self._nodes.append(shortcut_node)
+        return layer_name, channels 
 
     def _make_route_node(self, layer_name, layer_dict):
-        pass 
+        """If the 'layers' parameter from the DarkNet configuration
+        is only one index, continue node creation at the indicated 
+        (negative) index. Otherwise, create an ONNX Concat node with 
+        the route properties from the DarkNet-based graph. 
+        
+        Keyword arguments:
+            layer_name -- the layer's name (also the corresponding key
+                in layer_configs)
+            layer_dict -- a layer parameter dictionary (on element 
+                of layer_configs)
+        """
+        route_node_indexes = layer_dict["layers"]
+        if len(route_node_indexes) == 1:
+            split_index = route_node_indexes[0]
+            assert split_index < 0 
+            # Increment by one because we skipped the YOLO layer:
+            split_index += 1 
+            self.major_node_specs = self.major_node_specs[:split_index]
+            layer_name = None 
+            channels = None 
+        else:
+            inputs = list()
+            channels = 0 
+            for index in route_node_indexes:
+                if index > 0:
+                    # Increment by one because we count the input as 
+                    # a node (DarkNet does not)
+                    index += 1
+                route_node_specs = self._get_previous_node_specs(target_index=index)
+                inputs.append(route_node_specs.name)
+                channels += route_node_specs.channels 
+            assert inputs 
+            assert channels > 0 
+
+            route_node = helper.make_node(
+                "Concat", 
+                axis=1, 
+                inputs=inputs, 
+                outputs=[layer_name], 
+                name=layer_name, 
+            )
+            self._nodes.append(route_node)
+        return layer_name, channels 
 
     def _make_resize_node(self, layer_name, layer_dict):
-        pass 
+        """Create an ONNX Resize node with the properties from the 
+        DarkNet-based graph 
+        
+        Keyword arguments:
+            layer_name -- the layer's name (also the corresponding key 
+                in layer_configs)
+            layer_dict -- a layer parameter dictionary (one element 
+                of layer_configs)
+        """
+        resize_scale_factors = float(layer_dict["stride"])
+        # Create the scale factor array with node parameters 
+        scales = np.array(
+            [1.0, 1.0, resize_scale_factors, resize_scale_factors]
+        ).astype(np.float32)
+        previous_node_specs = self._get_previous_node_specs()
+        inputs = [previous_node_specs.name]
+
+        channels = previous_node_specs.channels 
+        assert channels > 0 
+        resize_params = ResizeParams(layer_name, scales)
+
+        # roi input is the second input, so append it before scales 
+        roi_name = resize_params.generate_roi_name()
+        inputs.append(roi_name)
+
+        scales_name = resize_params.generate_param_name()
+        inputs.append(scales_name)
+
+        resize_node = helper.make_node(
+            "Resize", 
+            coordinate_transformation_mode="asymmetric", 
+            mode="nearest", 
+            nearest_mode="floor", 
+            inputs=inputs, 
+            outputs=[layer_name], 
+            name=layer_name, 
+        )
+        self._nodes.append(resize_node)
+        self.param_dict[layer_name] = resize_params 
+        return layer_name, channels 
 
 def main():
-    pass 
+    """Run the DarkNet-to-ONNX conversion for YOLOv3-608."""
+    cfg_file_path = getFilePath("./samples/yolov3.cfg")
+    # These are the only layers DarkNetParser will extract 
+    # parameters from. The three layers of type 'yolo' are 
+    # not parsed in detail because they are included in the 
+    # post_processing later:
+    supported_layers = ["net", "convolutional", "shortcut", 
+                        "route", "upsample"]
+    # Create a DarkNetParser object, and the use it to generate
+    # an OrderedDict with all layer's configs from the cfg file:
+    parser = DarkNetParser(supported_layers)
+    layer_configs = parser.parse_cfg_file(cfg_file_path)
+    # We do not need the parser anymore after we got layer_configs:
+    del parser 
+
+    # In above layer_config, there are three outputs that we need 
+    # to know the output shape of (in CHW format):
+    output_tensor_dims = OrderedDict()
+    output_tensor_dims["082_convolutional"] = [255, 19, 19]
+    output_tensor_dims["094_convolutional"] = [255, 38, 38]
+    output_tensor_dims["106_convolutional"] = [255, 76, 76]
+
+    # Create a GraphBuilderONNX object with the know output tensor dimensions:
+    builder = GraphBuilderONNX(output_tensor_dims)
+    weights_file_path = getFilePath
+
 
 if __name__ == '__main__':
     main()
